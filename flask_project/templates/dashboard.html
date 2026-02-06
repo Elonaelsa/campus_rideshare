@@ -1,0 +1,367 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - Campus Rideshare{% endblock %}
+
+{% block content %}
+<style>
+/* Layout */
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(to right, #f1f8e9, #e3f2fd);
+  color: #111827;
+}
+/* Logout button at bottom */
+.logout-section {
+  position: absolute;
+  bottom: 30px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #ef4444;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 10px 0;
+  border-radius: 12px;
+  transition: 0.2s;
+}
+
+.logout-btn:hover {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+.sidebar {
+  position: relative;
+}
+
+.sidebar .menu a:hover,
+.sidebar .menu a.active {
+  background: #e0e7ff;
+  color: #1d4ed8;
+}
+
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Main Dashboard */
+.dashboard-main {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+}
+
+.dashboard-header h1 {
+  font-size: 26px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.dashboard-header p {
+  color: #6b7280;
+  font-size: 14px;
+  margin-bottom: 30px;
+}
+
+/* Stats Cards */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.stat-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.stat-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.stat-top .icon {
+  background: #e0e7ff;
+  color: #1d4ed8;
+  padding: 10px;
+  border-radius: 12px;
+  font-size: 20px;
+}
+
+.stat-value {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 10px 0 5px;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* Recent Rides */
+.recent-rides {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.rides-list {
+  flex: 2;
+}
+
+.rides-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.rides-list-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.rides-list-header a {
+  font-size: 14px;
+  color: #1d4ed8;
+  text-decoration: none;
+}
+
+.ride-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 15px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+
+.ride-card h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 6px;
+}
+
+.ride-details {
+  font-size: 13px;
+  color: #6b7280;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 8px;
+}
+
+.ride-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.price {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.badge {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.badge.upcoming {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.badge.completed {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.badge.cancelled {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+/* Quick Actions */
+.quick-actions {
+  flex: 1;
+}
+
+.quick-actions h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.quick-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.quick-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  cursor: pointer;
+  transition: 0.2s;
+  text-align: center;
+}
+
+.quick-card:hover {
+  background: #f9fafb;
+  transform: translateY(-2px);
+}
+
+.quick-card .icon {
+  font-size: 20px;
+  background: #e0f2fe;
+  color: #0284c7;
+  padding: 10px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+
+.quick-card h3 {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.quick-card p {
+  font-size: 12px;
+  color: #6b7280;
+}
+</style>
+
+<div class="dashboard-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h1>
+      <span class="heading-black">Campus</span>
+      <span class="gradient-text">Rideshare</span>
+    </h1>
+    <br><br>
+    <ul class="menu">
+      <li><a href="{{ url_for('dashboard') }}" class="active"><i data-lucide="layout-dashboard"></i> Dashboard</a></li>
+      <li><a href="{{ url_for('profile') }}"><i data-lucide="user"></i> Profile</a></li>
+      <li><a href="{{ url_for('find_rides') }}"><i data-lucide="search"></i> Find Rides</a></li>
+      <li><a href="{{ url_for('my_rides') }}"><i data-lucide="car"></i> My Rides</a></li>
+      <li><a href="{{ url_for('offer_ride') }}"><i data-lucide="plus-circle"></i> Offer Ride</a></li>
+      <li><a href="#"><i data-lucide="info"></i> Ride Details</a></li>
+    </ul>
+    <div class="logout-section">
+      <a href="{{ url_for('logout') }}" class="logout-btn">
+        <i data-lucide="log-out"></i>
+        Logout
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="dashboard-main">
+    <div class="dashboard-header">
+      <h1>Welcome back, {{ user.full_name }} 👋</h1>
+      <p>{{ user.email }}</p>
+    </div>
+
+    <!-- Stats -->
+    <section class="stats">
+      <div class="stat-card">
+        <div class="stat-top"><div class="icon">🚗</div></div>
+        <div class="stat-value">{{ stats.total_offered }}</div>
+        <div class="stat-label">Total offered rides</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-top"><div class="icon">🧍‍♂️</div></div>
+        <div class="stat-value">{{ stats.total_booked }}</div>
+        <div class="stat-label">Total booked rides</div>
+      </div>
+    </section>
+
+    <!-- Rides List + Quick Actions -->
+    <section class="recent-rides">
+      <div class="rides-list">
+        <div class="rides-list-header">
+          <h2>Your Offered Rides</h2>
+          <a href="{{ url_for('my_rides') }}">View All</a>
+        </div>
+
+        {% if rides %}
+          {% for ride in rides %}
+            <div class="ride-card">
+              <h3>{{ ride.pickup }} → {{ ride.drop }}</h3>
+              <div class="ride-details">
+                <span>📅 {{ ride.date }}</span>
+                <span>⏰ {{ ride.time }}</span>
+                <span>💺 Seats: {{ ride.seats }}</span>
+                <span>🚘 Vehicle: {{ ride.vehicle }}</span>
+              </div>
+              <div class="ride-footer">
+                <span class="price">₹{{ ride.price }}</span>
+                {% if ride.status == "Upcoming" %}
+                  <span class="badge upcoming">Upcoming</span>
+                {% elif ride.status == "Completed" %}
+                  <span class="badge completed">Completed</span>
+                {% elif ride.status == "Cancelled" %}
+                  <span class="badge cancelled">Cancelled</span>
+                {% else %}
+                  <span class="badge">{{ ride.status }}</span>
+                {% endif %}
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <p>No offered rides yet.</p>
+        {% endif %}
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="quick-actions">
+        <h2>Quick Actions</h2>
+        <div class="quick-grid">
+          <a href="{{ url_for('find_rides') }}" class="quick-card">
+            <div class="icon">🔍</div>
+            <h3>Find a Ride</h3>
+            <p>Search for available rides</p>
+          </a>
+          <a href="{{ url_for('offer_ride') }}" class="quick-card">
+            <div class="icon">➕</div>
+            <h3>Offer a Ride</h3>
+            <p>Share your trip with others</p>
+          </a>
+          <div class="quick-card">
+            <div class="icon">📅</div>
+            <h3>Schedule Ride</h3>
+            <p>Plan your ride for later</p>
+          </div>
+          <div class="quick-card">
+            <div class="icon">📍</div>
+            <h3>Nearby Stops</h3>
+            <p>Find popular pickup points</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+{% endblock %}

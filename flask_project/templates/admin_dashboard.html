@@ -1,0 +1,318 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard - Campus Rideshare{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(to right, #f1f8e9, #e3f2fd);
+  color: #111827;
+}
+
+/* ===== Layout ===== */
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ===== Sidebar ===== */
+.sidebar {
+  width: 250px;
+  background: #ffffff;
+  border-right: 1px solid #e5e7eb;
+  padding: 2rem 1rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sidebar h1 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin-bottom: 2rem;
+}
+
+.sidebar .gradient-text {
+  background: linear-gradient(to right, #3b82f6, #22c55e);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.sidebar .menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar .menu li {
+  margin-bottom: 12px;
+}
+
+.sidebar .menu a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: #374151;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.sidebar .menu a i {
+  width: 20px;
+}
+
+.sidebar .menu a:hover,
+.sidebar .menu a.active {
+  background: linear-gradient(to right, #3b82f6, #22c55e);
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== Logout Section ===== */
+.logout-section {
+  text-align: center;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #ef4444;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 10px;
+  border-radius: 10px;
+  transition: 0.2s;
+}
+
+.logout-btn:hover {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+/* ===== Main Content ===== */
+.main {
+  flex: 1;
+  padding: 40px;
+}
+
+.header {
+  margin-bottom: 25px;
+}
+
+.header h1 {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.header p {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+/* ===== Stats Cards ===== */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.stat-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  text-align: center;
+}
+
+.stat-card h3 {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 6px;
+}
+
+.stat-card p {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+}
+
+/* ===== Offered Rides Table ===== */
+.table-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.table-card h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+th {
+  color: #6b7280;
+  font-weight: 600;
+}
+
+td {
+  color: #111827;
+}
+
+.badge {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.badge-active {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.badge-completed {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+}
+
+.badge-cancelled {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.badge-pending {
+  background-color: #fef9c3;
+  color: #854d0e;
+}
+
+.empty-message {
+  text-align: center;
+  color: #6b7280;
+  margin-top: 30px;
+}
+</style>
+
+<div class="dashboard-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div>
+      <h1>Campus <span class="gradient-text">Rideshare</span></h1>
+      <ul class="menu">
+        <li><a href="{{ url_for('admin_dashboard') }}" class="active"><i class="fa-solid fa-gauge"></i> Dashboard</a></li>
+        <li><a href="{{ url_for('manage_users') }}"><i class="fa-solid fa-users"></i> Manage Users</a></li>
+        <li><a href="{{ url_for('manage_rides') }}"><i class="fa-solid fa-car"></i> Manage All Rides</a></li>
+        <li><a href="{{ url_for('admin_booking') }}"><i class="fa-solid fa-book-open"></i> Bookings</a></li>
+        <li><a href="{{ url_for('admin_users_profiles') }}"><i class="fa-solid fa-user-circle"></i> User Profiles</a></li>
+        <li><a href="{{ url_for('admin_reports') }}"><i class="fa-solid fa-chart-bar"></i> Reports</a></li>
+      </ul>
+    </div>
+
+    <div class="logout-section">
+      <a href="{{ url_for('logout') }}" class="logout-btn">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Dashboard -->
+  <main class="main">
+    <div class="header">
+      <h1>Welcome back, {{ user.full_name }} 👋</h1>
+      <p>{{ user.email }}</p>
+    </div>
+
+    <!-- Stats -->
+    <section class="stats">
+      <div class="stat-card">
+        <h3>Total Offered Rides</h3>
+        <p>{{ stats.total_rides }}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Money Earned</h3>
+        <p>₹{{ stats.money_earned }}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Total Booked Rides</h3>
+        <p>{{ stats.total_booked }}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Rating</h3>
+        <p>{{ stats.rating }}</p>
+      </div>
+    </section>
+
+    <!-- Offered Rides Table -->
+    <section class="table-card">
+      <h2>Offered Rides</h2>
+      {% if rides %}
+      <table>
+        <thead>
+          <tr>
+            <th>Pickup</th>
+            <th>Drop</th>
+            <th>Date</th>
+            <th>Seats</th>
+            <th>Price</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for ride in rides %}
+          <tr>
+            <td>{{ ride.pickup }}</td>
+            <td>{{ ride.drop }}</td>
+            <td>{{ ride.date }}</td>
+            <td>{{ ride.seats }}</td>
+            <td>₹{{ ride.price }}</td>
+            <td>
+              {% if ride.status %}
+                {% if ride.status.lower() == "active" %}
+                  <span class="badge badge-active">Active</span>
+                {% elif ride.status.lower() == "completed" %}
+                  <span class="badge badge-completed">Completed</span>
+                {% elif ride.status.lower() == "cancelled" %}
+                  <span class="badge badge-cancelled">Cancelled</span>
+                {% else %}
+                  <span class="badge badge-pending">{{ ride.status | capitalize }}</span>
+                {% endif %}
+              {% else %}
+                <span class="badge badge-pending">Pending</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty-message">No offered rides available.</div>
+      {% endif %}
+    </section>
+  </main>
+</div>
+{% endblock %}

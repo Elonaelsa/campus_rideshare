@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}User Profile Details - Campus Rideshare{% endblock %}
+
+{% block content %}
+<style>
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: #f9fafb;
+}
+.profile-container {
+  max-width: 700px;
+  margin: 3rem auto;
+  background: #fff;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+.profile-header img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.profile-header h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+}
+.profile-details p {
+  margin: 10px 0;
+  color: #374151;
+}
+.back-link {
+  display: inline-block;
+  margin-bottom: 1rem;
+  text-decoration: none;
+  color: #2563eb;
+  font-weight: 500;
+}
+</style>
+
+<div class="profile-container">
+  <a href="{{ url_for('admin_users_profiles') }}" class="back-link">← Back to User List</a>
+  <div class="profile-header">
+    <img src="{{ url_for('static', filename='uploads/' + user_data.get('profile_image', 'default.jpg')) }}" alt="Profile Image">
+    <div>
+      <h2>{{ user_data.get('full_name', 'Unknown') }}</h2>
+      <p>{{ user_data.get('email', 'N/A') }}</p>
+    </div>
+  </div>
+
+  <div class="profile-details">
+    <p><strong>Role:</strong> {{ user_data.get('role', 'N/A') }}</p>
+    <p><strong>Department:</strong> {{ user_data.get('department', 'N/A') }}</p>
+    <p><strong>Phone:</strong> {{ user_data.get('phone', 'N/A') }}</p>
+    <p><strong>Total Rides:</strong> {{ user_data.get('total_rides', 0) }}</p>
+    <p><strong>Earned:</strong> ₹{{ user_data.get('earned', 0) }}</p>
+    <p><strong>Rating:</strong> {{ user_data.get('rating', 0) }}</p>
+  </div>
+</div>
+{% endblock %}

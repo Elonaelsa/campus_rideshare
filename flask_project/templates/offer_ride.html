@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% block title %}Offer Ride - Campus Rideshare{% endblock %}
+
+{% block content %}
+<style>
+  body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(to right, #f1f8e9, #e3f2fd);
+    color: #111827;
+  }
+  /* Logout button at bottom */
+.logout-section {
+  position: absolute;
+  bottom: 30px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #ef4444;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 10px 0;
+  border-radius: 12px;
+  transition: 0.2s;
+}
+
+.logout-btn:hover {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+.sidebar {
+  position: relative;
+}
+
+  .dashboard-container {
+    display: flex;
+    min-height: 100vh;
+  }
+  .offer-section {
+    max-width: 900px;
+    margin: 3rem auto;
+    background: #fff;
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  }
+  .offer-section h2 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 1.2rem;
+    text-align: center;
+    color: #2186eb;
+  }
+  .form-label {
+    font-weight: 600;
+    color: #444;
+  }
+  .form-control, .form-select {
+    border-radius: 12px;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    transition: border 0.2s;
+  }
+  .form-control:focus, .form-select:focus {
+    border-color: #2186eb;
+    box-shadow: 0 0 0 0.2rem rgba(33, 134, 235, 0.2);
+  }
+  .btn-gradient {
+    color: #fff !important;
+    background: linear-gradient(90deg, #2186eb 30%, #22c993 100%);
+    border: none;
+    padding: 0.75rem 2rem;
+    font-size: 1.1rem;
+    border-radius: 30px;
+    font-weight: 600;
+    box-shadow: 0 5px 15px rgba(33, 134, 235, 0.15);
+    transition: all 0.3s ease;
+  }
+  .btn-gradient:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 24px rgba(33, 134, 235, 0.25);
+  }
+</style>
+
+<div class="dashboard-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h1>
+      <span class="heading-black">Campus</span>
+      <span class="gradient-text">Rideshare</span>
+    </h1>
+    <br><br>
+    <ul class="menu">
+      <li><a href="{{ url_for('dashboard') }}"><i data-lucide="layout-dashboard"></i> Dashboard</a></li>
+      <li><a href="{{ url_for('profile') }}"><i data-lucide="user"></i> Profile</a></li>
+      <li><a href="{{ url_for('find_rides') }}"><i data-lucide="search"></i> Find Rides</a></li>
+      <li><a href="{{ url_for('my_rides') }}"><i data-lucide="car"></i> My Rides</a></li>
+      <li><a href="{{ url_for('offer_ride') }}" class="active"><i data-lucide="plus-circle"></i> Offer Ride</a></li>
+      <li><a href="{{ url_for('ride_details', ride_id='none') }}"><i data-lucide="info"></i> Ride Details</a></li>
+    </ul>
+    <div class="logout-section">
+  <a href="{{ url_for('logout') }}" class="logout-btn">
+    <i data-lucide="log-out"></i>
+    Logout
+  </a>
+  </aside>
+
+  <!-- Main -->
+  <section class="offer-section">
+    <h2>🚗 Offer a Ride</h2>
+    <form method="POST" action="{{ url_for('offer_ride') }}">
+      <div class="row g-4">
+        <div class="col-md-6">
+          <label for="pickup" class="form-label">Pickup Location</label>
+          <input type="text" id="pickup" name="pickup" class="form-control" placeholder="Enter pickup point" required>
+        </div>
+        <div class="col-md-6">
+          <label for="drop" class="form-label">Drop Location</label>
+          <input type="text" id="drop" name="drop" class="form-control" placeholder="Enter drop point" required>
+        </div>
+        <div class="col-md-6">
+          <label for="date" class="form-label">Date</label>
+          <input type="date" id="date" name="date" class="form-control" required>
+        </div>
+        <div class="col-md-6">
+          <label for="time" class="form-label">Time</label>
+          <input type="time" id="time" name="time" class="form-control" required>
+        </div>
+        <div class="col-md-6">
+  <label for="vehicle" class="form-label">Vehicle Details</label>
+  <input type="text" id="vehicle" name="vehicle" class="form-control" placeholder="e.g. Maruti Swift KL05 AB1234" required>
+</div>
+        <div class="col-md-6">
+          <label for="seats" class="form-label">Available Seats</label>
+          <select id="seats" name="seats" class="form-select" required>
+            <option value="">Select seats</option>
+            <option value="1">1 Seat</option>
+            <option value="2">2 Seats</option>
+            <option value="3">3 Seats</option>
+            <option value="4">4 Seats</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label for="cost" class="form-label">Cost per Person (₹)</label>
+          <input type="number" id="cost" name="cost" class="form-control" placeholder="Enter cost" required>
+        </div>
+        <div class="col-12">
+          <label for="notes" class="form-label">Additional Notes</label>
+          <textarea id="notes" name="notes" class="form-control" rows="3" placeholder="E.g. Music preferences, luggage space available, etc."></textarea>
+        </div>
+      </div>
+      <div class="text-center mt-4">
+        <button type="submit" class="btn-gradient">Submit Ride Offer</button>
+      </div>
+    </form>
+  </section>
+</div>
+
+<script>
+  // Restrict past dates
+  let today = new Date().toISOString().split("T")[0];
+  document.getElementById("date").setAttribute("min", today);
+</script>
+
+{% endblock %}

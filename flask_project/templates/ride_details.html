@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+{% block title %}Ride Details - Campus Rideshare{% endblock %}
+
+{% block content %}
+<style>
+  body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(to right, #f1f8e9, #e3f2fd);
+    color: #111827;
+  }
+
+  .logout-section {
+    position: absolute;
+    bottom: 30px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+  }
+
+  .logout-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #ef4444;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 10px 0;
+    border-radius: 12px;
+    transition: 0.2s;
+  }
+
+  .logout-btn:hover {
+    background: #fee2e2;
+    color: #b91c1c;
+  }
+
+  .sidebar {
+    position: relative;
+  }
+
+  .dashboard-container {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  .menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .menu li {
+    margin-bottom: 1rem;
+  }
+
+  .menu a {
+    text-decoration: none;
+    color: #333;
+    padding: 0.6rem 1rem;
+    display: block;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+  }
+
+  .menu a:hover,
+  .menu a.active {
+    background: #e3f2fd;
+    color: #0d47a1;
+    font-weight: 500;
+  }
+
+  .dashboard-main {
+    flex: 1;
+    padding: 30px;
+    overflow-y: auto;
+  }
+
+  .ride-details-container {
+    flex: 1;
+    max-width: 950px;
+    background: #fff;
+    border-radius: 20px;
+    padding: 2rem 2.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  .ride-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+  }
+
+  .badge-status {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: 12px;
+    background: #e3f2fd;
+    color: #0d47a1;
+  }
+
+  .ride-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .info-box {
+    background: #f8f9fa;
+    padding: 1rem 1.5rem;
+    border-radius: 14px;
+    border: 1px solid #e0e0e0;
+  }
+
+  .info-box strong {
+    display: block;
+    margin-bottom: 0.4rem;
+    color: #333;
+  }
+
+  .action-buttons {
+    text-align: center;
+    margin-top: 2rem;
+  }
+
+  .btn-gradient {
+    color: #fff;
+    background: linear-gradient(90deg, #2186eb 30%, #22c993 100%);
+    border: none;
+    padding: 0.75rem 2rem;
+    font-size: 1.1rem;
+    border-radius: 30px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-decoration: none;
+  }
+
+  .btn-gradient:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(33, 134, 235, 0.2);
+  }
+</style>
+
+<div class="dashboard-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h1>
+      <span class="heading-black">Campus</span>
+      <span class="gradient-text">Rideshare</span>
+    </h1>
+    <br><br>
+    <ul class="menu">
+      <li><a href="{{ url_for('dashboard') }}"><i data-lucide="layout-dashboard"></i> Dashboard</a></li>
+      <li><a href="{{ url_for('profile') }}"><i data-lucide="user"></i> Profile</a></li>
+      <li><a href="{{ url_for('find_rides') }}"><i data-lucide="search"></i> Find Rides</a></li>
+      <li><a href="{{ url_for('my_rides') }}"><i data-lucide="car"></i> My Rides</a></li>
+      <li><a href="{{ url_for('offer_ride') }}"><i data-lucide="plus-circle"></i> Offer Ride</a></li>
+      <li><a href="#" class="active"><i data-lucide="info"></i> Ride Details</a></li>
+    </ul>
+
+    <div class="logout-section">
+      <a href="{{ url_for('logout') }}" class="logout-btn">
+        <i data-lucide="log-out"></i>
+        Logout
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="dashboard-main">
+    <section class="ride-details-container">
+      <div class="ride-header">
+        <div class="d-flex align-items-center mb-3">
+          <div>
+            <h4 class="mb-0">{{ ride.driver_name }}</h4>
+            {% if ride.driver_info %}
+              <small class="text-muted">{{ ride.driver_info.email }}</small><br>
+              {% if ride.driver_info.phone %}
+                <small class="text-muted">📞 {{ ride.driver_info.phone }}</small>
+              {% endif %}
+            {% endif %}
+          </div>
+        </div>
+        <span class="badge-status">Upcoming</span>
+      </div>
+
+      <div class="ride-info">
+        <div class="info-box">
+          <strong>From</strong>
+          {{ ride.pickup }}
+        </div>
+        <div class="info-box">
+          <strong>To</strong>
+          {{ ride.drop }}
+        </div>
+        <div class="info-box">
+          <strong>Date & Time</strong>
+          {{ ride.date }} | {{ ride.time }}
+        </div>
+        <div class="info-box">
+          <strong>Seats Available</strong>
+          {{ ride.seats }}
+        </div>
+        <div class="info-box">
+          <strong>Price per Seat</strong>
+          ₹{{ ride.price }}
+        </div>
+        <div class="info-box">
+          <strong>Car Details</strong>
+          {{ ride.vehicle }}
+        </div>
+      </div>
+
+      <div class="info-box mb-4">
+        <strong>Additional Notes</strong>
+        {{ ride.notes or "No additional notes" }}
+      </div>
+
+      <div class="action-buttons">
+        <!-- ✅ Corrected: Pass ride_id to book_ride -->
+        <a href="{{ url_for('book_ride', ride_id=ride_id) }}" class="btn btn-primary">Book Ride</a>
+        
+        <a href="{{ url_for('find_rides') }}" class="btn btn-outline-secondary">Back</a>
+      </div>
+    </section>
+  </main>
+</div>
+{% endblock %}

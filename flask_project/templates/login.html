@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Login - Campus Rideshare{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card shadow p-4">
+      <h3 class="mb-3 text-center">Login</h3>
+
+      <!-- Flash Messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <!-- Login Form -->
+      <form method="POST" action="{{ url_for('login') }}" id="loginForm" novalidate>
+        
+        <!-- Email -->
+        <div class="mb-3">
+          <label class="form-label">College Email</label>
+          <input type="email" class="form-control" name="email"
+                 placeholder="yourname@saintgits.org"
+                 pattern="^[a-zA-Z0-9._%+-]+@saintgits\.org$" required>
+          <div class="invalid-feedback">Enter a valid @saintgits.org email.</div>
+        </div>
+
+        <!-- Password -->
+        <div class="mb-3">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-control" name="password" required>
+          <div class="invalid-feedback">Password is required.</div>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="btn btn-primary w-100">Login</button>
+        <p class="mt-3 text-center">
+          Don’t have an account? <a href="{{ url_for('register') }}">Register</a>
+        </p>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Bootstrap validation for login form
+  (function () {
+    'use strict';
+    const form = document.getElementById('loginForm');
+    form.addEventListener('submit', function (event) {
+      if (!form.checkValidity()) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      form.classList.add('was-validated');
+    }, false);
+  })();
+</script>
+{% endblock %}

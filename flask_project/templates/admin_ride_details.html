@@ -1,0 +1,309 @@
+{% extends "base.html" %}
+{% block title %}Ride Details - Admin Panel{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+<style>
+body {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  background: linear-gradient(to right, #f1f8e9, #e3f2fd);
+  color: #111827;
+}
+
+/* ===== Layout ===== */
+.dashboard {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ===== Sidebar (MATCHED EXACTLY WITH MANAGE ALL RIDES PAGE) ===== */
+/* ===== Sidebar ===== */
+.sidebar {
+  width: 250px;
+  background: #ffffff;
+  border-right: 1px solid #e5e7eb;
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sidebar h1 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin-bottom: 2rem;
+}
+
+.sidebar .gradient-text {
+  background: linear-gradient(to right, #3b82f6, #22c55e);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.sidebar .menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar .menu li {
+  margin-bottom: 12px;
+}
+
+.sidebar .menu a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: #374151;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-weight: 500;
+  transition: 0.2s ease;
+}
+
+.sidebar .menu a i {
+  width: 20px;
+}
+
+.sidebar .menu a:hover,
+.sidebar .menu a.active {
+  background: linear-gradient(to right, #3b82f6, #22c55e);
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.gradient-text {
+  background: linear-gradient(to right, #3b82f6, #22c55e);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu li {
+  margin-bottom: 1rem;
+}
+
+.menu a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  font-size: 15px;
+  color: #374151;
+  padding: 12px 14px;
+  border-radius: 10px;
+  transition: 0.2s ease;
+}
+
+.menu a:hover,
+.menu a.active {
+  background: linear-gradient(to right, #3b82f6, #22c55e);
+  color: #ffffff;
+  box-shadow: 0px 3px 12px rgba(0, 0, 0, 0.12);
+}
+
+/* ===== Logout Section ===== */
+.logout-section {
+  margin-top: auto;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.logout-btn {
+  display: block;
+  text-align: center;
+  padding: 12px;
+  border-radius: 10px;
+  font-weight: 600;
+  color: #ef4444;
+  text-decoration: none;
+}
+
+.logout-btn:hover {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+/* ===== Main Content ===== */
+.main {
+  flex: 1;
+  padding: 40px;
+}
+
+/* ===== Header ===== */
+.details-header h1 {
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.details-header p {
+  color: #6b7280;
+  font-size: 15px;
+  margin-bottom: 20px;
+}
+
+/* ===== Details Card ===== */
+.details-card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 30px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08);
+  max-width: 950px;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: #bbf7d0;
+  color: #15803d;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* ===== Info Grid ===== */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+  margin-top: 20px;
+}
+
+.info-box {
+  background: #f9fafb;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+}
+
+.info-box strong {
+  display: block;
+  margin-bottom: 6px;
+  color: #374151;
+}
+
+/* ===== Passengers ===== */
+.passenger-list ul {
+  margin-top: 10px;
+  padding-left: 20px;
+}
+
+.passenger-list li {
+  font-size: 15px;
+}
+
+/* ===== Buttons ===== */
+.btn-back {
+  display: inline-block;
+  padding: 10px 18px;
+  background: #e5e7eb;
+  border-radius: 10px;
+  text-decoration: none;
+  color: #111827;
+  font-weight: 600;
+}
+
+.btn-delete {
+  padding: 10px 18px;
+  background: #ef4444;
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  border-radius: 10px;
+  margin-left: 10px;
+}
+
+.btn-delete:hover {
+  background: #dc2626;
+}
+</style>
+
+<!-- ===============================
+         PAGE STRUCTURE
+================================ -->
+<div class="dashboard">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h1>Campus <span class="gradient-text">Rideshare</span></h1>
+
+    <ul class="menu">
+      <li><a href="{{ url_for('admin_dashboard') }}"><i class="fa-solid fa-gauge"></i> Dashboard</a></li>
+      <li><a href="{{ url_for('manage_users') }}"><i class="fa-solid fa-users"></i> Manage Users</a></li>
+      <li><a href="{{ url_for('manage_rides') }}" class="active"><i class="fa-solid fa-car"></i> Manage All Rides</a></li>
+      <li><a href="{{ url_for('admin_dashboard') }}"><i class="fa-solid fa-book-open"></i> Bookings</a></li>
+      <li><a href="{{ url_for('admin_users_profiles') }}"><i class="fa-solid fa-user-circle"></i> User Profiles</a></li>
+      <li><a href="{{ url_for('admin_reports') }}"><i class="fa-solid fa-chart-bar"></i> Reports</a></li>
+    </ul>
+
+    <div class="logout-section">
+      <a href="{{ url_for('logout') }}" class="logout-btn">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main">
+
+    <div class="details-header">
+      <h1>Ride Details</h1>
+      <p>View complete information about this ride.</p>
+    </div>
+
+    <div class="details-card">
+
+      <!-- Status -->
+      <div>
+        <span class="status-badge">{{ ride.status or "active" }}</span>
+      </div>
+
+      <!-- Info Grid -->
+      <div class="info-grid">
+        <div class="info-box"><strong>Pickup</strong>{{ ride.pickup }}</div>
+        <div class="info-box"><strong>Drop</strong>{{ ride.drop }}</div>
+        <div class="info-box"><strong>Date</strong>{{ ride.date }}</div>
+        <div class="info-box"><strong>Time</strong>{{ ride.time }}</div>
+        <div class="info-box"><strong>Total Seats</strong>{{ ride.seats }}</div>
+        <div class="info-box"><strong>Booked Seats</strong>{{ ride.booked_seats or 0 }}</div>
+        <div class="info-box"><strong>Price / Seat</strong>₹{{ ride.price }}</div>
+        <div class="info-box"><strong>Driver Name</strong>{{ ride.driver_name }}</div>
+        <div class="info-box"><strong>Vehicle</strong>{{ ride.vehicle }}</div>
+      </div>
+
+      <!-- Passengers -->
+      <div class="passenger-list" style="margin-top:20px;">
+        <strong>Passengers:</strong>
+        {% if ride.passengers %}
+        <ul>
+          {% for uid, info in ride.passengers.items() %}
+          <li>{{ info.name }} — {{ info.email }}</li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p>No passengers booked.</p>
+        {% endif %}
+      </div>
+
+      <!-- Buttons -->
+      <div style="margin-top:20px;">
+        <a href="{{ url_for('manage_rides') }}" class="btn-back">Back</a>
+        <a href="{{ url_for('delete_ride', ride_id=ride_id) }}" class="btn-delete"
+           onclick="return confirm('Are you sure you want to delete this ride?')">Delete</a>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+{% endblock %}

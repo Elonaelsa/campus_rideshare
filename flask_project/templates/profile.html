@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+{% block title %}Profile - Campus Rideshare{% endblock %}
+
+{% block content %}
+<style>
+/* Layout */
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(to right, #f1f8e9, #e3f2fd);
+  color: #111827;
+}
+/* Logout button at bottom */
+.logout-section {
+  position: absolute;
+  bottom: 30px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #ef4444;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 10px 0;
+  border-radius: 12px;
+  transition: 0.2s;
+}
+
+.logout-btn:hover {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+.sidebar {
+  position: relative;
+}
+
+.dashboard-container { display: flex; min-height: 100vh; }
+
+/* Sidebar */
+.sidebar {
+  width: 250px; background: #fff;
+  padding: 20px; border-right: 1px solid #e5e7eb;
+}
+.sidebar h1 { font-size: 20px; font-weight: 700; }
+.sidebar .gradient-text {
+  background: linear-gradient(90deg, #2186eb 30%, #22c993 100%);
+  background-clip: text; -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.sidebar .menu { list-style: none; padding: 0; margin-top: 30px; }
+.sidebar .menu li { margin-bottom: 15px; }
+.sidebar .menu a {
+  color: #374151; text-decoration: none;
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 500;
+}
+.sidebar .menu a.active { color: #2186eb; }
+
+/* Main */
+.dashboard-main { flex: 1; padding: 30px; overflow-y: auto; }
+
+/* Profile Header */
+.profile-header {
+  background: linear-gradient(90deg, #2186eb 30%, #22c993 100%);
+  border-radius: 16px; padding: 30px; color: #fff;
+  display: flex; align-items: center; gap: 20px;
+  margin-bottom: 30px;
+}
+.profile-header img {
+  width: 90px; height: 90px; border-radius: 50%;
+  border: 3px solid #fff; object-fit: cover;
+}
+.profile-header h2 { font-size: 24px; margin: 0; }
+.profile-header p { font-size: 14px; opacity: 0.9; }
+
+/* Cards */
+.card {
+  background: #fff; border-radius: 16px;
+  padding: 20px; margin-bottom: 25px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+.card h4 { font-size: 18px; font-weight: 600; margin-bottom: 16px; color: #1f2937; }
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
+  gap: 20px;
+}
+.stat-box {
+  background: #f9fafb; border: 1px solid #e5e7eb;
+  border-radius: 12px; padding: 20px; text-align: center;
+}
+.stat-box h3 { font-size: 22px; font-weight: 700; margin: 5px 0; }
+.stat-box small { font-size: 13px; color: #6b7280; }
+
+/* Buttons */
+.btn-gradient {
+  color: #fff !important;
+  background: linear-gradient(90deg, #2186eb 30%, #22c993 100%);
+  border: none; padding: 0.5rem 1.5rem;
+  border-radius: 30px; font-weight: 600;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+.btn-gradient:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 24px rgba(33,134,235,0.18);
+}
+</style>
+
+
+<div class="dashboard-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h1>
+      <span class="heading-black">Campus</span>
+      <span class="gradient-text">Rideshare</span>
+    </h1>
+    <br><br>
+    <ul class="menu">
+      <li><a href="{{ url_for('dashboard') }}"><i data-lucide="layout-dashboard"></i> Dashboard</a></li>
+      <li><a href="{{ url_for('profile') }}" class="active"><i data-lucide="user"></i> Profile</a></li>
+      <li><a href="{{ url_for('find_rides') }}"><i data-lucide="search"></i> Find Rides</a></li>
+      <li><a href="{{ url_for('my_rides') }}"><i data-lucide="car"></i> My Rides</a></li>
+      <li><a href="{{ url_for('offer_ride') }}"><i data-lucide="plus-circle"></i> Offer Ride</a></li>
+      <li><a href="{{ url_for('ride_details', ride_id='none') }}"><i data-lucide="info"></i> Ride Details</a></li>
+    </ul>
+    <div class="logout-section">
+  <a href="{{ url_for('logout') }}" class="logout-btn">
+    <i data-lucide="log-out"></i>
+    Logout
+  </a>
+  </aside>
+
+  <!-- Main -->
+  <main class="dashboard-main">
+    <!-- Header -->
+    <div class="profile-header">
+      {% if user.profile_image %}
+        <img src="{{ url_for('static', filename='uploads/' + user.profile_image) }}" alt="Profile Image">
+      {% else %}
+        <img src="{{ url_for('static', filename='default.png') }}" alt="Default Profile">
+      {% endif %}
+      <div>
+        <h2>{{ user.full_name }}</h2>
+        <p>{{ user.role }} | {{ user.email }}</p>
+      </div>
+    </div>
+
+    <!-- Personal Info -->
+    <div class="card">
+      <h4>Personal Information</h4>
+      <ul class="list-group">
+        <li class="list-group-item"><strong>Full Name:</strong> {{ user.full_name }}</li>
+        <li class="list-group-item"><strong>Email:</strong> {{ user.email }}</li>
+        <li class="list-group-item"><strong>Phone:</strong> {{ user.phone }}</li>
+        <li class="list-group-item"><strong>College:</strong> {{ user.college }}</li>
+        <li class="list-group-item"><strong>Department:</strong> {{ user.department }}</li>
+        <li class="list-group-item"><strong>College ID:</strong> {{ user.college_id }}</li>
+        <li class="list-group-item"><strong>Role:</strong> {{ user.role|capitalize }}</li>
+      </ul>
+      <br>
+      <!-- Button to go to Update Profile Page -->
+      <a href="{{ url_for('update_profile') }}" class="btn-gradient">Edit Profile</a>
+    </div>
+
+    <!-- Ride Stats -->
+    
+      </div>
+    </div>
+  </main>
+</div>
+{% endblock %}

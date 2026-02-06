@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+{% block title %}User Profiles - Campus Rideshare{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(to right, #f1f8e9, #e3f2fd);
+  color: #111827;
+}
+
+/* ===== Layout ===== */
+.dashboard {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ===== Sidebar (Same as Admin Bookings + Manage Rides) ===== */
+.sidebar {
+  width: 250px;
+  background: #ffffff;
+  border-right: 1px solid #e5e7eb;
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sidebar h1 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin-bottom: 2rem;
+}
+
+.gradient-text {
+  background: linear-gradient(to right, #3b82f6, #22c55e);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.sidebar .menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar .menu li {
+  margin-bottom: 12px;
+}
+
+.sidebar .menu a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: #374151;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-weight: 500;
+  transition: 0.2s ease;
+}
+
+.sidebar .menu a i {
+  width: 20px;
+}
+
+.sidebar .menu a:hover,
+.sidebar .menu a.active {
+  background: linear-gradient(to right, #3b82f6, #22c55e);
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+/* ===== Logout Section ===== */
+.logout-section {
+  text-align: center;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #ef4444;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 10px;
+  border-radius: 10px;
+  transition: 0.2s;
+}
+
+.logout-btn:hover {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+/* ===== Main Content ===== */
+.main {
+  flex: 1;
+  padding: 40px;
+}
+
+.header h1 {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.header p {
+  color: #6b7280;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+/* ===== User Cards ===== */
+#userList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.user-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  transition: all 0.25s ease;
+  border: 1px solid #e5e7eb;
+}
+
+.user-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(59,130,246,0.15);
+  border-color: #3b82f6;
+}
+
+.user-card a {
+  text-decoration: none;
+  color: #111827;
+  font-weight: 700;
+  font-size: 18px;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+
+.user-card a:hover {
+  color: #2563eb;
+}
+
+.user-card p {
+  color: #6b7280;
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+.user-card p strong {
+  color: #111827;
+}
+
+.text-muted {
+  text-align: center;
+  color: #9ca3af;
+  margin-top: 30px;
+  font-size: 15px;
+}
+</style>
+
+<div class="dashboard">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div>
+      <h1>Campus <span class="gradient-text">Rideshare</span></h1>
+      <ul class="menu">
+        <li><a href="{{ url_for('admin_dashboard') }}"><i class="fa-solid fa-gauge"></i> Dashboard</a></li>
+        <li><a href="{{ url_for('manage_users') }}"><i class="fa-solid fa-users"></i> Manage Users</a></li>
+        <li><a href="{{ url_for('manage_rides') }}"><i class="fa-solid fa-car"></i> Manage All Rides</a></li>
+         <li><a href="{{ url_for('admin_booking') }}"><i class="fa-solid fa-book-open"></i> Bookings</a></li>
+        <li><a href="{{ url_for('admin_users_profiles') }}" class="active"><i class="fa-solid fa-user-circle"></i> User Profiles</a></li>
+        <li><a href="{{ url_for('admin_reports') }}"><i class="fa-solid fa-chart-bar"></i> Reports</a></li>
+      </ul>
+    </div>
+
+    <div class="logout-section">
+      <a href="{{ url_for('logout') }}" class="logout-btn">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main">
+    <div class="header">
+      <h1>User Profiles</h1>
+      <p>Click a user to view detailed information.</p>
+    </div>
+
+    <div id="userList">
+      {% if user_profiles %}
+        {% for user in user_profiles %}
+        <div class="user-card">
+          <a href="{{ url_for('admin_user_profile', user_id=user.id) }}">{{ user.name }}</a>
+          <p><strong>Email:</strong> {{ user.email }}</p>
+          <p><strong>Role:</strong> {{ user.role }}</p>
+        </div>
+        {% endfor %}
+      {% else %}
+        <p class="text-muted">No users found.</p>
+      {% endif %}
+    </div>
+  </main>
+
+</div>
+
+{% endblock %}

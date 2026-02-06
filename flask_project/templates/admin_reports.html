@@ -1,0 +1,331 @@
+{% extends "base.html" %}
+{% block title %}Reports - Campus Rideshare{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(to right, #f1f8e9, #e3f2fd);
+  color: #111827;
+}
+
+/* ===== Layout ===== */
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ===== Sidebar ===== */
+.sidebar {
+  width: 250px;
+  background: #ffffff;
+  border-right: 1px solid #e5e7eb;
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sidebar h1 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin-bottom: 2rem;
+}
+
+.sidebar .gradient-text {
+  background: linear-gradient(to right, #3b82f6, #22c55e);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.sidebar .menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar .menu li {
+  margin-bottom: 12px;
+}
+
+.sidebar .menu a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: #374151;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.sidebar .menu a i {
+  width: 20px;
+}
+
+.sidebar .menu a:hover,
+.sidebar .menu a.active {
+  background: linear-gradient(to right, #3b82f6, #22c55e);
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== Logout Section ===== */
+.logout-section {
+  text-align: center;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #ef4444;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 10px;
+  border-radius: 10px;
+  transition: 0.2s;
+}
+
+.logout-btn:hover {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+/* ===== Main Content ===== */
+.main {
+  flex: 1;
+  padding: 40px;
+}
+
+/* ===== Header ===== */
+.header {
+  margin-bottom: 25px;
+}
+
+.header h1 {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.header p {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+/* ===== Stats Cards ===== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.stat-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  text-align: center;
+}
+
+.stat-card i {
+  font-size: 24px;
+  color: #3b82f6;
+  margin-bottom: 8px;
+}
+
+.stat-card h2 {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.stat-card p {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* ===== Tabs ===== */
+.tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.tab-btn {
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: none;
+  background: #f3f4f6;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.tab-btn.active {
+  background: linear-gradient(to right, #3b82f6, #22c55e);
+  color: white;
+}
+
+/* ===== Tab Content ===== */
+.tab-content {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  animation: fadeIn 0.3s ease;
+}
+
+.hidden {
+  display: none;
+}
+
+/* ===== Data Cards ===== */
+.data-card {
+  background: #f9fafb;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  margin-bottom: 15px;
+}
+
+.data-card h5 {
+  margin: 0 0 5px;
+  color: #111827;
+}
+
+.data-card p {
+  margin: 3px 0;
+  color: #4b5563;
+  font-size: 14px;
+}
+
+.text-muted {
+  text-align: center;
+  color: #9ca3af;
+  font-style: italic;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>
+
+<div class="dashboard-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div>
+      <h1>Campus <span class="gradient-text">Rideshare</span></h1>
+      <ul class="menu">
+        <li><a href="{{ url_for('admin_dashboard') }}"><i class="fa-solid fa-gauge"></i> Dashboard</a></li>
+        <li><a href="{{ url_for('manage_users') }}"><i class="fa-solid fa-users"></i> Manage Users</a></li>
+        <li><a href="{{ url_for('manage_rides') }}"><i class="fa-solid fa-car"></i> Manage All Rides</a></li>
+        <li><a href="{{ url_for('admin_booking') }}"><i class="fa-solid fa-book"></i> Bookings</a></li>
+        <li><a href="{{ url_for('admin_users_profiles') }}"><i class="fa-solid fa-user-circle"></i> User Profiles</a></li>
+        <li><a href="{{ url_for('admin_reports') }}" class="active"><i class="fa-solid fa-chart-bar"></i> Reports</a></li>
+      </ul>
+    </div>
+
+    <div class="logout-section">
+      <a href="{{ url_for('logout') }}" class="logout-btn">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main">
+    <div class="header">
+      <h1>Reports</h1>
+      <p>View analytics, users, and rides summary</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <i class="fa-solid fa-users"></i>
+        <h2>{{ total_users }}</h2>
+        <p>Total Users</p>
+      </div>
+      <div class="stat-card">
+        <i class="fa-solid fa-car"></i>
+        <h2>{{ total_rides }}</h2>
+        <p>Total Rides</p>
+      </div>
+      <div class="stat-card">
+        <i class="fa-solid fa-chart-line"></i>
+        <h2>{{ "%.1f"|format(growth_percent) }}%</h2>
+        <p>Growth</p>
+      </div>
+      <div class="stat-card">
+        <i class="fa-solid fa-indian-rupee-sign"></i>
+        <h2>{{ "%.2f"|format(total_revenue) }}</h2>
+        <p>Total Revenue</p>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+  
+
+   
+
+    <!-- Users -->
+    <div id="users" class="tab-content hidden">
+      <h3 class="fw-bold mb-3">All Users</h3>
+      {% if users_ref %}
+        {% for uid, user in users_ref.items() %}
+          <div class="data-card">
+            <h5>{{ user.full_name or "N/A" }}</h5>
+            <p><strong>Email:</strong> {{ user.email or "N/A" }}</p>
+            <p><strong>Phone:</strong> {{ user.phone or "N/A" }}</p>
+            <p><strong>College:</strong> {{ user.college or "N/A" }}</p>
+            <p><strong>Role:</strong> {{ user.role or "User" }}</p>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p class="text-muted">No users found.</p>
+      {% endif %}
+    </div>
+
+    <!-- Rides -->
+    <div id="rides" class="tab-content hidden">
+      <h3 class="fw-bold mb-3">All Offered Rides</h3>
+      {% if rides_ref %}
+        {% for rid, ride in rides_ref.items() %}
+          <div class="data-card">
+            <h5>{{ ride.pickup or "Unknown" }} ➜ {{ ride.drop or "Unknown" }}</h5>
+            <p><strong>Date:</strong> {{ ride.date or "N/A" }}</p>
+            <p><strong>Time:</strong> {{ ride.time or "N/A" }}</p>
+            <p><strong>Seats:</strong> {{ ride.seats or "N/A" }}</p>
+            <p><strong>Driver:</strong> {{ ride.user or "N/A" }}</p>
+            <p><strong>Vehicle:</strong> {{ ride.vehicle or "N/A" }}</p>
+            <p><strong>Status:</strong> {{ ride.status or "Active" }}</p>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p class="text-muted">No rides found.</p>
+      {% endif %}
+    </div>
+  </main>
+</div>
+
+<script>
+function showTab(tabId) {
+  document.querySelectorAll(".tab-content").forEach(el => el.classList.add("hidden"));
+  document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
+  document.getElementById(tabId).classList.remove("hidden");
+  document.querySelector(`.tab-btn[onclick="showTab('${tabId}')"]`).classList.add("active");
+}
+</script>
+{% endblock %}

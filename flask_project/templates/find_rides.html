@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+{% block title %}Find Rides - Campus Rideshare{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(to right, #f1f8e9, #e3f2fd);
+  color: #111827;
+}
+/* Logout button at bottom */
+.logout-section {
+  position: absolute;
+  bottom: 30px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #ef4444;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 10px 0;
+  border-radius: 12px;
+  transition: 0.2s;
+}
+
+.logout-btn:hover {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+.sidebar {
+  position: relative;
+}
+
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+}
+.dashboard-main {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+}
+.search-section {
+  max-width: 1000px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 20px;
+  padding: 2.5rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+.search-section h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1.2rem;
+  text-align: center;
+  color: #22c993;
+}
+.form-label {
+  font-weight: 600;
+  color: #444;
+}
+.form-control, .form-select {
+  border-radius: 12px;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+}
+.form-control:focus, .form-select:focus {
+  border-color: #22c993;
+  box-shadow: 0 0 0 0.2rem rgba(34,201,147,0.2);
+}
+.btn-gradient {
+  color: #fff !important;
+  background: linear-gradient(90deg, #2186eb 30%, #22c993 100%);
+  border: none;
+  padding: 0.75rem 2rem;
+  font-size: 1.1rem;
+  border-radius: 30px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+.btn-gradient:hover {
+  transform: scale(1.05);
+}
+.ride-card {
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  transition: transform 0.2s;
+  padding: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+.ride-card:hover {
+  transform: translateY(-5px);
+}
+.price-badge {
+  background: linear-gradient(90deg, #2186eb, #22c993);
+  color: #fff;
+  padding: 0.4rem 0.9rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.autocomplete-suggestions {
+  border: 1px solid #ddd;
+  max-height: 200px;
+  overflow-y: auto;
+  background: white;
+  position: absolute;
+  z-index: 1000;
+  width: 90%;
+  border-radius: 8px;
+}
+.autocomplete-suggestion {
+  padding: 8px;
+  cursor: pointer;
+}
+.autocomplete-suggestion:hover {
+  background: #f0f0f0;
+}
+</style>
+
+<div class="dashboard-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h1>
+      <span class="heading-black">Campus</span>
+      <span class="gradient-text">Rideshare</span>
+    </h1>
+    <br><br>
+    
+    <ul class="menu">
+      <li><a href="{{ url_for('dashboard') }}"><i data-lucide="layout-dashboard"></i> Dashboard</a></li>
+      <li><a href="{{ url_for('profile') }}"><i data-lucide="user"></i> Profile</a></li>
+      <li><a href="{{ url_for('find_rides') }}" class="active"><i data-lucide="search"></i> Find Rides</a></li>
+      <li><a href="{{ url_for('my_rides') }}"><i data-lucide="car"></i> My Rides</a></li>
+      <li><a href="{{ url_for('offer_ride') }}"><i data-lucide="plus-circle"></i> Offer Ride</a></li>
+      <li><a href="#"><i data-lucide="info"></i> Ride Details</a></li>
+    </ul>
+    <div class="logout-section">
+  <a href="{{ url_for('logout') }}" class="logout-btn">
+    <i data-lucide="log-out"></i>
+    Logout
+  </a>
+  </aside>
+
+  <!-- Main -->
+  <main class="dashboard-main">
+    <section class="search-section">
+      <h2>🔎 Find a Ride</h2>
+
+      <!-- Search Form -->
+      <form id="rideSearchForm" method="POST" action="{{ url_for('find_rides') }}" class="mb-4">
+        <div class="row g-3 position-relative">
+          <div class="col-md-6 position-relative">
+            <label class="form-label">Pickup Location</label>
+            <input type="text" id="pickup" name="pickup" class="form-control" placeholder="Enter pickup point" required autocomplete="off">
+            <div id="pickup-suggestions" class="autocomplete-suggestions"></div>
+          </div>
+          <div class="col-md-6 position-relative">
+            <label class="form-label">Drop Location</label>
+            <input type="text" id="drop" name="drop" class="form-control" placeholder="Enter drop point" required autocomplete="off">
+            <div id="drop-suggestions" class="autocomplete-suggestions"></div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Date</label>
+            <input type="date" id="rideDate" name="date" class="form-control" required>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Time</label>
+            <input type="time" name="time" class="form-control">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Seats Needed</label>
+            <select name="seats" class="form-select">
+              <option value="Any">Any</option>
+              <option value="1">1 Seat</option>
+              <option value="2">2 Seats</option>
+              <option value="3">3 Seats</option>
+            </select>
+          </div>
+        </div>
+        <div class="text-center mt-4">
+          <button type="submit" class="btn-gradient">Search Rides</button>
+        </div>
+      </form>
+
+      <!-- Results -->
+      <h4 class="fw-bold mb-3">Available Rides</h4>
+
+      {% if available_rides %}
+        {% for ride_id, ride in available_rides.items() %}
+          <div class="ride-card mb-3 p-3 rounded shadow-sm">
+            <h5>{{ ride.pickup }} ➜ {{ ride.drop }}</h5>
+            <p><strong>Date:</strong> {{ ride.date }} | <strong>Time:</strong> {{ ride.time }}</p>
+            <p><strong>Seats:</strong> {{ ride.available_seats }} | <strong>Price:</strong> ₹{{ ride.price }}</p>
+            <a href="{{ url_for('ride_details', ride_id=ride_id) }}" class="btn btn-primary btn-sm">View Details</a>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p class="text-muted">No rides found. Try different search criteria.</p>
+      {% endif %}
+    </section>
+  </main>
+</div>
+
+<!-- JS -->
+<script>
+// Restrict past dates
+let today = new Date().toISOString().split("T")[0];
+document.getElementById("rideDate").setAttribute("min", today);
+
+// Autocomplete suggestions using OSM (Kerala focus)
+async function fetchSuggestions(query, elementId, inputId) {
+  if (query.length < 3) {
+    document.getElementById(elementId).innerHTML = "";
+    return;
+  }
+  const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&countrycodes=in&state=Kerala&q=${query}`;
+  const res = await fetch(url);
+  const data = await res.json();
+
+  let suggestions = "";
+  data.forEach(item => {
+    suggestions += `<div class="autocomplete-suggestion" onclick="selectSuggestion('${item.display_name}', '${inputId}', '${elementId}')">${item.display_name}</div>`;
+  });
+  document.getElementById(elementId).innerHTML = suggestions;
+}
+
+function selectSuggestion(value, inputId, elementId) {
+  document.getElementById(inputId).value = value;
+  document.getElementById(elementId).innerHTML = "";
+}
+
+document.getElementById("pickup").addEventListener("input", e => fetchSuggestions(e.target.value, "pickup-suggestions", "pickup"));
+document.getElementById("drop").addEventListener("input", e => fetchSuggestions(e.target.value, "drop-suggestions", "drop"));
+
+// Validate Saintgits condition
+document.getElementById("rideSearchForm").addEventListener("submit", function(e) {
+  let pickup = document.getElementById("pickup").value.toLowerCase();
+  let drop = document.getElementById("drop").value.toLowerCase();
+  if (!(pickup.includes("saintgits college of engineering") || drop.includes("saintgits college of engineering"))) {
+    e.preventDefault();
+    alert("Either Pickup or Drop location must include 'Saintgits College of Engineering'.");
+  }
+});
+</script>
+{% endblock %}

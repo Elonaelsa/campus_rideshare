@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Edit Ride - Campus Rideshare{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="card shadow p-4">
+    <h3 class="text-center text-primary mb-4">Edit Ride Details</h3>
+    <form method="POST">
+      <div class="mb-3">
+        <label class="form-label">Pickup Location</label>
+        <input type="text" name="pickup" class="form-control" value="{{ ride.pickup }}" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Drop Location</label>
+        <input type="text" name="drop" class="form-control" value="{{ ride.drop }}" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Date</label>
+        <input type="date" name="date" class="form-control" value="{{ ride.date }}" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Time</label>
+        <input type="time" name="time" class="form-control" value="{{ ride.time }}" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Available Seats</label>
+        <input type="number" name="available_seats" class="form-control" value="{{ ride.available_seats }}" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Price (₹)</label>
+        <input type="number" name="price" class="form-control" value="{{ ride.price }}" required>
+      </div>
+      <div class="d-flex justify-content-between mt-4">
+        <a href="{{ url_for('my_rides') }}" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

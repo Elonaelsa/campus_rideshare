@@ -1,0 +1,268 @@
+{% extends "base.html" %}
+{% block title %}My Rides - Campus Rideshare{% endblock %}
+
+{% block content %}
+<style>
+/* Layout */
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(to right, #f1f8e9, #e3f2fd);
+  color: #111827;
+}
+
+/* Logout button at bottom */
+.logout-section {
+  position: absolute;
+  bottom: 30px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+}
+.logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #ef4444;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 10px 0;
+  border-radius: 12px;
+  transition: 0.2s;
+}
+.logout-btn:hover {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+.sidebar {
+  position: relative;
+}
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Main Content */
+.dashboard-main {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+}
+
+/* Profile Section */
+.profile-section {
+  max-width: 1000px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 20px;
+  padding: 2.5rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  margin-bottom: 2rem;
+}
+.profile-header img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #22a7f0;
+}
+.profile-header h3 {
+  margin: 0;
+  font-weight: 700;
+  color: #22a7f0;
+}
+
+/* Tabs */
+.nav-tabs .nav-link.active {
+  background-color: #22a7f0;
+  color: #fff;
+  border-radius: 20px;
+}
+
+/* Ride Cards */
+.ride-card {
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  transition: transform 0.2s;
+  padding: 1.2rem;
+  margin-bottom: 1.5rem;
+  background: #fff;
+}
+.ride-card:hover {
+  transform: translateY(-5px);
+}
+.ride-status {
+  font-size: 0.85rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 12px;
+}
+
+/* Buttons */
+.ride-card .btn {
+  min-width: 90px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+.ride-card .btn-outline-secondary:hover,
+.ride-card .btn-outline-primary:hover {
+  background-color: #22a7f0;
+  color: #fff;
+  border-color: #22a7f0;
+}
+.ride-card .btn-danger:hover {
+  opacity: 0.9;
+  transform: scale(1.03);
+}
+
+/* Status colors */
+.status-upcoming { background: #e3f2fd; color: #0d47a1; }
+.status-completed { background: #e8f5e9; color: #1b5e20; }
+.status-cancelled { background: #ffebee; color: #b71c1c; }
+</style>
+
+<div class="dashboard-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h1>
+      <span class="heading-black">Campus</span>
+      <span class="gradient-text">Rideshare</span>
+    </h1>
+    <br><br>
+    <ul class="menu">
+      <li><a href="{{ url_for('dashboard') }}"><i data-lucide="layout-dashboard"></i> Dashboard</a></li>
+      <li><a href="{{ url_for('profile') }}"><i data-lucide="user"></i> Profile</a></li>
+      <li><a href="{{ url_for('find_rides') }}"><i data-lucide="search"></i> Find Rides</a></li>
+      <li><a href="{{ url_for('my_rides') }}" class="active"><i data-lucide="car"></i> My Rides</a></li>
+      <li><a href="{{ url_for('offer_ride') }}"><i data-lucide="plus-circle"></i> Offer Ride</a></li>
+      <li><a href="{{ url_for('ride_details', ride_id='none') }}"><i data-lucide="info"></i> Ride Details</a></li>
+    </ul>
+
+    <div class="logout-section">
+      <a href="{{ url_for('logout') }}" class="logout-btn">
+        <i data-lucide="log-out"></i>
+        Logout
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="dashboard-main">
+    <section class="profile-section">
+      <div class="profile-header">
+        {% if user.profile_image %}
+          <img src="{{ url_for('static', filename='uploads/' + user.profile_image) }}" alt="Profile Picture">
+        {% else %}
+          <img src="{{ url_for('static', filename='default.png') }}" alt="Default Profile">
+        {% endif %}
+        <div>
+          <h3>{{ user.full_name }}</h3>
+          <p class="mb-0 text-muted">{{ user.email }}</p>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <ul class="nav nav-tabs mb-4" id="rideTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="offered-tab" data-bs-toggle="tab" data-bs-target="#offered" type="button" role="tab">Offered Rides</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="booked-tab" data-bs-toggle="tab" data-bs-target="#booked" type="button" role="tab">Booked Rides</button>
+        </li>
+      </ul>
+
+      <!-- Tab Content -->
+      <div class="tab-content">
+        <!-- Offered Rides -->
+        <div class="tab-pane fade show active" id="offered" role="tabpanel">
+          {% if offered_rides %}
+            {% for ride in offered_rides %}
+              <div class="ride-card">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <p><strong>From:</strong> {{ ride.pickup }} → <strong>To:</strong> {{ ride.drop }}</p>
+                    <p><strong>Date:</strong> {{ ride.date }} | <strong>Time:</strong> {{ ride.time }}</p>
+
+                    {% if ride.status == 'Completed' %}
+                      <span class="badge bg-success">Completed</span>
+                    {% elif ride.status == 'Upcoming' %}
+                      <span class="badge bg-info">Upcoming</span>
+                    {% elif ride.status == 'Cancelled' %}
+                      <span class="badge bg-danger">Cancelled</span>
+                    {% endif %}
+                  </div>
+
+                  <div class="d-flex gap-2">
+                    {% if ride.status == "Upcoming" %}
+                      <a href="{{ url_for('edit_ride', ride_id=ride.ride_id) }}" class="btn btn-outline-secondary">Edit</a>
+
+                      <!-- ✅ Fixed Cancel Button Form -->
+                      <form action="{{ url_for('cancel_ride', ride_id=ride.id) }}" method="POST" style="display:inline;">
+    <button type="submit" class="btn btn-danger">Cancel</button>
+</form>
+
+
+
+                    
+
+                    {% elif ride.status == "Cancelled" %}
+                      <button class="btn btn-secondary" disabled>Cancelled</button>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          {% else %}
+            <p class="text-muted">No offered rides found.</p>
+          {% endif %}
+        </div>
+
+        <!-- Booked Rides -->
+        <div class="tab-pane fade" id="booked" role="tabpanel">
+          {% if booked_rides %}
+            {% for ride in booked_rides %}
+              <div class="ride-card">
+                <div class="d-flex justify-content-between">
+                  <div>
+                    <p><strong>Driver:</strong> {{ ride.driver }}</p>
+                    <p><strong>From:</strong> {{ ride.pickup }} → <strong>To:</strong> {{ ride.drop }}</p>
+                    <p><strong>Date:</strong> {{ ride.date }} | <strong>Time:</strong> {{ ride.time }}</p>
+                    <p><strong>Payment:</strong> {{ ride.payment_method|title }}</p>
+                    {% if ride.screenshot %}
+                      <p><strong>Screenshot:</strong> 
+                        <a href="{{ ride.screenshot }}" target="_blank">View</a>
+                      </p>
+                    {% endif %}
+                    {% if ride.status == 'Completed' %}
+                      <span class="badge bg-success">Completed</span>
+                    {% elif ride.status == 'Upcoming' %}
+                      <span class="badge bg-info">Upcoming</span>
+                    {% elif ride.status == 'Cancelled' %}
+                      <span class="badge bg-danger">Cancelled</span>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          {% else %}
+            <p class="text-muted">No booked rides found.</p>
+          {% endif %}
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}

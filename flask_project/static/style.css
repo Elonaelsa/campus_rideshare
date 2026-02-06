@@ -1,0 +1,187 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f8f9fa;
+  color: #333;
+}
+
+/* Sidebar */
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 220px;
+  background: #2c3e50;
+  color: white;
+  padding: 20px;
+}
+
+.sidebar .logo {
+  margin-bottom: 20px;
+}
+
+.sidebar .menu {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar .menu li {
+  margin: 10px 0;
+}
+
+.sidebar .menu a {
+  color: white;
+  text-decoration: none;
+}
+
+.sidebar .menu a.active {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+/* Main content */
+.dashboard-main {
+  flex: 1;
+  padding: 20px;
+}
+
+.stats {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.stat-card {
+  background: white;
+  flex: 1;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.recent-rides {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.rides-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.rides-table th, .rides-table td {
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+.badge {
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+.badge.success {
+  background: #27ae60;
+  color: white;
+}
+
+.badge.pending {
+  background: #f39c12;
+  color: white;
+}
+
+/* Find Rides */
+.find-container {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+}
+
+.ride-search {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.ride-search label {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+input[type="text"], input[type="date"] {
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.btn {
+  background: #2980b9;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: #1c5985;
+}
+
+.ride-results .ride-card {
+  background: white;
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #2c3e50;
+  color: white;
+  padding: 12px 20px;
+}
+
+.navbar .brand {
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: white;
+  text-decoration: none;
+}
+
+.nav-links a {
+  margin-left: 15px;
+  text-decoration: none;
+  color: white;
+  transition: color 0.2s ease;
+}
+
+.nav-links a:hover {
+  color: #f39c12;
+}
+
+/* Main content area */
+.content {
+  padding: 20px;
+}
+
+/* Footer */
+.footer {
+  background: #2c3e50;
+  color: white;
+  text-align: center;
+  padding: 10px 0;
+  margin-top: 40px;
+}

@@ -1,0 +1,220 @@
+{% extends "base.html" %}
+{% block title %}Manage Offered Rides - Campus Rideshare{% endblock %}
+
+{% block content %}
+<style>
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: #f9fafb;
+  color: #111827;
+}
+
+/* ===== Layout ===== */
+.dashboard {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ===== Sidebar ===== */
+.sidebar {
+  width: 250px;
+  background: #fff;
+  border-right: 1px solid #e5e7eb;
+  padding: 2rem 1rem;
+}
+.sidebar h1 {
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+.sidebar .gradient-text {
+  background: linear-gradient(90deg, #34d399, #2563eb);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 2rem;
+}
+.sidebar ul a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  text-decoration: none;
+  color: #374151;
+  border-radius: 10px;
+  font-weight: 500;
+}
+.sidebar ul a.active,
+.sidebar ul a:hover {
+  background: #e0e7ff;
+  color: #1d4ed8;
+}
+
+/* ===== Main Content ===== */
+.main {
+  flex: 1;
+  padding: 40px;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.header h1 {
+  font-size: 24px;
+  font-weight: 700;
+}
+.header p {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+/* ===== Search Bar ===== */
+.search-bar {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+.search-bar input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  outline: none;
+  font-size: 14px;
+  background: #f9fafb;
+}
+
+/* ===== Table ===== */
+.table-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th, td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+th {
+  color: #6b7280;
+  font-weight: 600;
+}
+td {
+  color: #111827;
+}
+tr:hover {
+  background: #f9fafb;
+}
+.empty-message {
+  text-align: center;
+  color: #6b7280;
+  margin-top: 30px;
+}
+
+/* ===== Delete Button ===== */
+.btn-delete {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+.btn-delete:hover {
+  background: #c0392b;
+}
+</style>
+
+<div class="dashboard">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h1>Campus <span class="gradient-text">Rideshare</span></h1>
+    <ul>
+      <li><a href="{{ url_for('admin_dashboard') }}"><i class="fa-solid fa-chart-line"></i> Dashboard</a></li>
+      <li><a href="{{ url_for('manage_users') }}"><i class="fa-solid fa-users"></i> Manage Users</a></li>
+      <li><a href="{{ url_for('manage_rides') }}"><i class="fa-solid fa-car"></i> Manage All Rides</a></li>
+      <li><a href="{{ url_for('offered_rides') }}" class="active"><i class="fa-solid fa-route"></i> Offered Rides</a></li>
+      <li><a href="{{ url_for('bookings') }}"><i class="fa-solid fa-book"></i> Bookings</a></li>
+      <li><a href="{{ url_for('user_profiles') }}"><i class="fa-solid fa-user"></i> User Profiles</a></li>
+      <li><a href="{{ url_for('reports') }}"><i class="fa-solid fa-chart-bar"></i> Reports</a></li>
+    </ul>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main">
+    <div class="header">
+      <div>
+        <h1>Manage Offered Rides</h1>
+        <p>View, search, and delete rides offered by users.</p>
+      </div>
+    </div>
+
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="🔍 Search offered rides..." onkeyup="filterRides()">
+    </div>
+
+    <div class="table-card">
+      {% if offered_rides %}
+      <table id="ridesTable">
+        <thead>
+          <tr>
+            <th>Ride ID</th>
+            <th>Pickup</th>
+            <th>Drop</th>
+            <th>Date</th>
+            <th>Driver Name</th>
+            <th>Vehicle</th>
+            <th>Available Seats</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for ride_id, ride in offered_rides.items() %}
+          <tr>
+            <td>{{ ride_id }}</td>
+            <td>{{ ride.pickup or 'N/A' }}</td>
+            <td>{{ ride.drop or 'N/A' }}</td>
+            <td>{{ ride.date or 'N/A' }}</td>
+            <td>{{ ride.driver_name or 'N/A' }}</td>
+            <td>{{ ride.vehicle or 'N/A' }}</td>
+            <td>{{ ride.available_seats or 'N/A' }}</td>
+            <td>{{ ride.status or 'Active' }}</td>
+            <td>
+              <form method="POST" action="{{ url_for('delete_ride', ride_id=ride_id) }}" onsubmit="return confirm('Are you sure you want to delete this ride?');">
+                <button type="submit" class="btn-delete">Delete</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty-message">
+        No offered rides found in the system.
+      </div>
+      {% endif %}
+    </div>
+  </main>
+</div>
+
+<script>
+function filterRides() {
+  const input = document.getElementById("searchInput").value.toLowerCase();
+  const rows = document.querySelectorAll("#ridesTable tbody tr");
+  rows.forEach(row => {
+    const text = row.textContent.toLowerCase();
+    row.style.display = text.includes(input) ? "" : "none";
+  });
+}
+</script>
+{% endblock %}

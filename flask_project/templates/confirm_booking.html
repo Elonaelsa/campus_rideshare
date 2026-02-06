@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+{% block title %}Confirm Booking - Campus Rideshare{% endblock %}
+
+{% block content %}
+<style>
+  body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(to right, #f1f8e9, #e3f2fd);
+    color: #111827;
+  }
+
+  .dashboard-container {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    background-color: #ffffff;
+    border-right: 1px solid #e5e7eb;
+    width: 260px;
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 3px 0 10px rgba(0, 0, 0, 0.05);
+  }
+
+  .sidebar h1 {
+    font-size: 1.7rem;
+    font-weight: 800;
+    margin-bottom: 2.5rem;
+    text-align: center;
+  }
+
+  .gradient-text {
+    background: linear-gradient(90deg, #2186eb, #22c993);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .menu { list-style: none; padding: 0; margin: 0; }
+  .menu li { margin-bottom: 1rem; }
+  .menu a {
+    display: block;
+    padding: 0.7rem 1rem;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+  .menu a:hover, .menu a.active {
+    background: #e3f2fd;
+    color: #0d47a1;
+    font-weight: 600;
+  }
+
+  .logout-section { margin-top: auto; text-align: center; }
+  .logout-btn {
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px; color: #ef4444; font-weight: 600;
+    text-decoration: none; padding: 10px 0;
+    border-radius: 12px; transition: 0.2s;
+  }
+  .logout-btn:hover { background: #fee2e2; color: #b91c1c; }
+
+  /* Main Content */
+  .main-content { flex: 1; padding: 40px 60px; overflow-y: auto; }
+  .page-title { font-weight: 700; color: #0d47a1; text-align: center; margin-bottom: 30px; }
+
+  /* Card */
+  .card {
+    background-color: #fff;
+    border-radius: 20px;
+    padding: 30px 35px;
+    margin-top: 40px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .btn-primary {
+    background: linear-gradient(90deg, #2186eb 30%, #22c993 100%);
+    color: #fff;
+    border: none;
+    border-radius: 30px;
+    font-weight: 600;
+    padding: 12px;
+    width: 100%;
+    transition: 0.3s ease;
+  }
+  .btn-primary:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(33, 134, 235, 0.25);
+  }
+
+  .form-check-label { font-weight: 500; }
+</style>
+
+<div class="dashboard-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h1>
+      <span class="heading-black">Campus</span>
+      <span class="gradient-text">Rideshare</span>
+    </h1>
+    <ul class="menu">
+      <li><a href="{{ url_for('dashboard') }}"><i data-lucide="layout-dashboard"></i> Dashboard</a></li>
+      <li><a href="{{ url_for('profile') }}"><i data-lucide="user"></i> Profile</a></li>
+      <li><a href="{{ url_for('find_rides') }}"><i data-lucide="search"></i> Find Rides</a></li>
+      <li><a href="{{ url_for('my_rides') }}"><i data-lucide="car"></i> My Rides</a></li>
+      <li><a href="{{ url_for('offer_ride') }}"><i data-lucide="plus-circle"></i> Offer Ride</a></li>
+      <li><a href="#" class="active"><i data-lucide="credit-card"></i> Payment</a></li>
+    </ul>
+
+    <div class="logout-section">
+      <a href="{{ url_for('logout') }}" class="logout-btn"><i data-lucide="log-out"></i> Logout</a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <h2 class="page-title">💳 Payment</h2>
+
+    <div class="card">
+      <form id="paymentForm" method="POST" enctype="multipart/form-data">
+        <div class="mb-4">
+          <label class="form-check-label">
+            <input type="radio" name="payment_method" value="cash_on_delivery" required>
+            Cash on Delivery
+          </label>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-check-label">
+            <input type="radio" name="payment_method" value="online_payment" required>
+            Online Payment (Upload Screenshot)
+          </label>
+        </div>
+
+        <div class="mb-3">
+          <label for="payment_screenshot" class="form-label fw-bold">Upload Screenshot (if online payment):</label>
+          <input type="file" id="payment_screenshot" name="payment_screenshot" class="form-control" accept="image/*" disabled>
+        </div>
+
+        <div class="mb-3">
+          <label for="note" class="form-label fw-bold">Add a Note (optional):</label>
+          <textarea id="note" name="note" class="form-control" rows="3" placeholder="Any additional information..."></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">✅ Confirm Booking</button>
+      </form>
+    </div>
+  </main>
+</div>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+  lucide.createIcons();
+
+  const form = document.getElementById("paymentForm");
+  const cashOption = document.querySelector("input[value='cash_on_delivery']");
+  const onlineOption = document.querySelector("input[value='online_payment']");
+  const fileInput = document.getElementById("payment_screenshot");
+
+  // Enable/disable screenshot field
+  function updateFileRequirement() {
+    if (onlineOption.checked) {
+      fileInput.disabled = false;
+    } else {
+      fileInput.disabled = true;
+      fileInput.value = "";
+    }
+  }
+
+  cashOption.addEventListener("change", updateFileRequirement);
+  onlineOption.addEventListener("change", updateFileRequirement);
+
+  // Validate before submitting
+  form.addEventListener("submit", function (e) {
+    if (onlineOption.checked && !fileInput.files.length) {
+      e.preventDefault();
+      alert("⚠️ Please upload a payment screenshot for online payment.");
+      fileInput.focus();
+    }
+  });
+</script>
+{% endblock %}

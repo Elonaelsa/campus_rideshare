@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %}Update Profile - Campus Rideshare{% endblock %}
+
+{% block content %}
+<style>
+/* Form styling */
+.dashboard-main {
+  padding: 30px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 25px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.card h4 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.update-form input {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+}
+
+.update-form button {
+  margin-top: 10px;
+  width: 100%;
+}
+
+.btn-gradient {
+  color: #fff !important;
+  background: linear-gradient(90deg, #2186eb 30%, #22c993 100%);
+  border: none;
+  padding: 0.6rem 1.5rem;
+  border-radius: 30px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+.btn-gradient:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 24px rgba(33,134,235,0.18);
+}
+</style>
+
+<div class="dashboard-main">
+  
+  <!-- Update Profile Card -->
+  <div class="card">
+    <h4>Update Profile</h4>
+    <form action="{{ url_for('update_profile') }}" method="POST" enctype="multipart/form-data" class="update-form">
+
+      <!-- Full Name -->
+      <input type="text" name="full_name" value="{{ user.full_name }}" placeholder="Full Name" required>
+
+      <!-- Phone -->
+      <input type="text" name="phone" value="{{ user.phone }}" placeholder="Phone" required>
+
+      <!-- College -->
+      <input type="text" name="college" value="{{ user.college }}" placeholder="College" required>
+
+      <!-- Department -->
+      <input type="text" name="department" value="{{ user.department }}" placeholder="Department" required>
+
+      <!-- Profile Image -->
+      <label class="form-label">Profile Image</label><br>
+      {% if user.profile_image %}
+        <img src="{{ url_for('static', filename='uploads/' + user.profile_image) }}"
+             alt="Profile Image"
+             class="rounded-circle mb-2"
+             style="width: 120px; height: 120px; object-fit: cover;">
+      {% else %}
+        <img src="{{ url_for('static', filename='default.png') }}"
+             alt="Default Profile"
+             class="rounded-circle mb-2"
+             style="width: 120px; height: 120px; object-fit: cover;">
+      {% endif %}
+      <input type="file" name="profile_image" class="form-control mt-2" accept="image/*">
+
+      <!-- Email (readonly) -->
+      <input type="email" value="{{ user.email }}" readonly>
+
+      <!-- Submit -->
+      <button type="submit" class="btn btn-gradient">Save Changes</button>
+    </form>
+
+    <br>
+    <a href="{{ url_for('profile') }}" class="btn btn-secondary">Cancel</a>
+  </div>
+
+  <!-- Change Password Card -->
+  <div class="card mt-4">
+    <h4>Change Password</h4>
+    <form action="{{ url_for('update_password') }}" method="POST" class="update-form">
+      <input type="password" name="current_password" placeholder="Current Password" required>
+      <input type="password" name="new_password" placeholder="New Password" required>
+      <input type="password" name="confirm_password" placeholder="Confirm New Password" required>
+      <button type="submit" class="btn btn-gradient">Update Password</button>
+    </form>
+  </div>
+
+</div>
+{% endblock %}

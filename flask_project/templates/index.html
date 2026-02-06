@@ -1,0 +1,267 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Campus Rideshare</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(to right, #e3f2fd, #f1f8e9);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #333;
+    }
+    .intro-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4rem 8%;
+      background: #ffffffcc;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      margin: 4rem auto;
+      max-width: 1200px;
+    }
+    .intro-left {
+      max-width: 50%;
+    }
+    .heading-black {
+      color: #111;
+      font-size: 4rem;
+      font-weight: 700;
+      display: block;
+      line-height: 1.05;
+      margin-bottom: 0;
+    }
+    .gradient-text {
+      background: linear-gradient(90deg, #2186eb 30%, #22c993 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-size: 4rem;
+      font-weight: 700;
+      display: block;
+      line-height: 1.05;
+      margin-top: -0.2em;
+    }
+    .intro-left p {
+      margin: 1rem 0;
+      font-size: 1.1rem;
+      color: #555;
+    }
+    .intro-left ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .intro-left ul li {
+      margin: 0.5rem 0;
+      font-size: 1.05rem;
+    }
+    .intro-left ul li::before {
+      content: '✔';
+      margin-right: 0.5rem;
+      color: green;
+    }
+    .intro-right {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+    }
+    .intro-right img {
+      max-width: 90%;
+      height: 300px;
+      border-radius: 10px; /* Curved corners */
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18); /* Shadow */
+    }
+    .button-group {
+      text-align: center;
+      margin-top: 2rem;
+    }
+    .btn-custom {
+      padding: 0.75rem 2rem;
+      font-size: 1.1rem;
+      border-radius: 30px;
+      transition: all 0.3s ease;
+    }
+    .btn-custom:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(0, 123, 255, 0.2);
+    }
+    .custom-button-group {
+      margin: 2rem 0 1.5rem 0;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .btn-gradient {
+      color: #fff !important;
+      background: linear-gradient(90deg, #2186eb 30%, #22c993 100%);
+      border: none;
+      padding: 0.75rem 2rem;
+      font-size: 1.1rem;
+      border-radius: 30px;
+      font-weight: 600;
+      box-shadow: 0 5px 15px rgba(33, 134, 235, 0.08);
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-gradient:hover, .btn-gradient:focus {
+      transform: scale(1.05);
+      box-shadow: 0 8px 24px rgba(33, 134, 235, 0.18);
+      color: #fff !important;
+    }
+  </style>
+</head>
+<body>
+  
+
+  <section class="intro-section">
+    <div class="intro-left">
+      <h1>
+        <span class="heading-black">Campus</span>
+        <span class="gradient-text">Rideshare</span>
+      </h1>
+      <div class="custom-button-group">
+        <a href="{{ url_for('register') }}"  class="btn btn-gradient me-3">Join Campus Rideshare </a>
+        <a href="{{ url_for('login') }}"  class="btn btn-outline-primary">Sign In</a>
+      </div>
+      <strong>Connect & Ride</strong>
+      <p>Join your campus community for safe, convenient, and eco-friendly rides. Share the journey with verified students and staff.</p>
+      <ul>
+        <li>Verified Members Only</li>
+        <li>Cost Sharing</li>
+        <li>Real-time Matching</li>
+        <li>Eco-friendly</li>
+      </ul>
+    </div>
+    <div class="intro-right">
+      <img src="{{ url_for('static', filename='home.png') }}" alt="Rideshare Illustration">
+    </div>
+  </section>
+  <div class="button-group">
+    <!-- Removed Register and Login buttons -->
+  </div>
+
+  <!-- Why Choose Campus Rideshare -->
+  <section class="container my-5">
+    <h2 class="text-center mb-3 fw-bold">Why Choose Campus Rideshare?</h2>
+    <p class="text-center mb-4">Built specifically for college communities, our platform prioritizes safety, convenience, and sustainability.</p>
+    <div class="row g-4 justify-content-center">
+      <div class="col-md-3">
+        <div class="card h-100 border-primary">
+          <div class="card-body text-center">
+            <h5 class="card-title fw-bold">Verified Members Only</h5>
+            <p class="card-text">Only students and staff from your trusted community.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card h-100 border-success">
+          <div class="card-body text-center">
+            <h5 class="card-title fw-bold">Real-time Matching</h5>
+            <p class="card-text">Get matched instantly and enjoy a seamless rideshare experience.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card h-100 border-info">
+          <div class="card-body text-center">
+            <h5 class="card-title fw-bold">Cost Sharing</h5>
+            <p class="card-text">Share costs easily and save on daily commutes.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card h-100 border-success">
+          <div class="card-body text-center">
+            <h5 class="card-title fw-bold">Eco-friendly</h5>
+            <p class="card-text">Reduce carbon footprint and promote sustainable transportation.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Join Thousands Section -->
+  <section class="container my-5">
+    <div class="row align-items-center">
+      <div class="col-md-6 mb-4 mb-md-0">
+        <h3 class="fw-bold">Join Thousands of Students Already Saving Money &amp; Time</h3>
+        <ul>
+          <li>Save money on transportation costs</li>
+          <li>Open access to campus parking</li>
+          <li>Meet new friends and build community</li>
+          <li>Contribute to environmental sustainability</li>
+          <li>Flexible scheduling for events and classes</li>
+        </ul>
+        <a href="#" class="btn btn-gradient mt-2">Get Started Today</a>
+      </div>
+      <div class="col-md-6">
+        <div class="card text-center shadow-sm">
+          <div class="card-body">
+            <div class="display-5 fw-bold mb-2 text-primary">5,000+</div>
+            <div class="mb-2">Active Campus Members</div>
+            <div class="row">
+              <div class="col">
+                <div class="fw-bold">250+</div>
+                <div class="small text-muted">Daily Rides</div>
+              </div>
+              <div class="col">
+                <div class="fw-bold">$60</div>
+                <div class="small text-muted">Avg. Monthly Savings</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Safety First Section -->
+  <section class="container my-5">
+    <h3 class="text-center fw-bold mb-3">Safety First, Always</h3>
+    <p class="text-center mb-4">Your safety is our top priority. We build multiple layers of security to ensure you can ride with confidence.</p>
+    <div class="row g-4 justify-content-center">
+      <div class="col-md-4">
+        <div class="card h-100 border-info">
+          <div class="card-body text-center">
+            <h5 class="card-title fw-bold">Verified Users</h5>
+            <p class="card-text">All users must verify school email and student/staff ID.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100 border-primary">
+          <div class="card-body text-center">
+            <h5 class="card-title fw-bold">Rating System</h5>
+            <p class="card-text">Rate and review rides to maintain quality and safety.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100 border-success">
+          <div class="card-body text-center">
+            <h5 class="card-title fw-bold">Real-time Updates</h5>
+            <p class="card-text">Stay informed with live notifications and trip tracking.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action Section -->
+  <section class="py-5" style="background: linear-gradient(90deg, #2186eb 30%, #22c993 100%);">
+    <div class="container text-center text-white">
+      <h4 class="fw-bold mb-3">Ready to Start Your Campus Journey?</h4>
+      <p class="mb-4">Join your campus rideshare community today and experience smarter, safer, and more sustainable transportation.</p>
+      <a href="{{ url_for('register') }}" class="btn btn-light btn-lg fw-bold">Create Your Account</a>
+    </div>
+  </section>
+
+ 
+</body>
+</html>
