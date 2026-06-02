@@ -100,19 +100,3 @@ Password: admin123
 
 ---
 
-## 🌱 Impact
-
-| Metric | Per Ride |
-|--------|----------|
-| 💰 Money Saved | ~₹50 |
-| 🌿 CO₂ Reduced | ~2.5 kg |
-
----
-
-## 📄 License
-
-This project is built for academic purposes at **Saintgits College of Engineering**.
-
----
-
-> Made with ❤️ by the Campus RideShare Team
